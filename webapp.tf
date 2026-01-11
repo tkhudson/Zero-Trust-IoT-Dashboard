@@ -1,13 +1,17 @@
+# Dev: Tyler Hudson - tkhudson
+# Static Web App Configuration
+# Hosts the real-time IoT dashboard with security monitoring
+
 # =============================================================================
 # AZURE STATIC WEB APPS (FREE TIER)
 # =============================================================================
 resource "azurerm_static_web_app" "dashboard" {
   name                = local.static_app_name
   resource_group_name = azurerm_resource_group.main.name
-  location            = "East US 2"  # Static Web Apps has limited region availability
+  location            = "East US 2" # Static Web Apps has limited region availability
   sku_tier            = "Free"
   sku_size            = "Free"
-  
+
   tags = merge(local.common_tags, {
     Purpose = "IoT-Dashboard"
     Tier    = "Free"
@@ -34,10 +38,10 @@ resource "azurerm_role_assignment" "storage_admin" {
   principal_id         = var.admin_object_id
 }
 
-# Static Web App Contributor
+# Website Contributor (Static Web Apps don't have specific contributor role)
 resource "azurerm_role_assignment" "static_app_admin" {
   count                = var.admin_object_id != "" ? 1 : 0
   scope                = azurerm_static_web_app.dashboard.id
-  role_definition_name = "Static Web App Contributor"
+  role_definition_name = "Website Contributor"
   principal_id         = var.admin_object_id
 }

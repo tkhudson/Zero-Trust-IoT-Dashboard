@@ -1,3 +1,7 @@
+# Dev: Tyler Hudson - tkhudson
+# Azure IoT Hub Configuration - Zero-Trust Architecture
+# Implements secure IoT device management with defender integration
+
 # =============================================================================
 # IOT HUB (F1 FREE TIER ONLY)
 # =============================================================================
@@ -5,31 +9,23 @@ resource "azurerm_iothub" "main" {
   name                = local.iot_hub_name
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
-  
+
   # F1 Free tier: 8,000 messages/day, up to 500 devices
   sku {
     name     = "F1"
-    capacity = "1"  # Fixed for F1
+    capacity = "1" # Fixed for F1
   }
-  
-  # Zero-trust device authentication
-  endpoint {
-    type                       = "AzureIotHub.EventHub"
-    connection_string          = ""  # Will be auto-generated
-    name                       = "events"
-    batch_frequency_in_seconds = 60
-    max_chunk_size_in_bytes    = 10485760
-    encoding                   = "JSON"
-  }
-  
+
+  # Built-in events endpoint is automatically created
+
   tags = merge(local.common_tags, {
     Purpose = "IoT-Device-Ingestion"
     Tier    = "F1-Free"
   })
-  
+
   # Enforce minimum TLS version
   min_tls_version = "1.2"
-  
+
   # Enable device identity and cloud-to-device messages
   cloud_to_device {
     max_delivery_count = 10
@@ -40,15 +36,15 @@ resource "azurerm_iothub" "main" {
       lock_duration      = "PT30S"
     }
   }
-  
+
   # Device streams for secure device communication
   file_upload {
     connection_string  = azurerm_storage_account.state.primary_connection_string
     container_name     = "deviceuploads"
-    sas_ttl           = "PT1H"
-    notifications     = false
-    lock_duration     = "PT1M"
-    default_ttl       = "PT1H"
+    sas_ttl            = "PT1H"
+    notifications      = false
+    lock_duration      = "PT1M"
+    default_ttl        = "PT1H"
     max_delivery_count = 10
   }
 }
@@ -75,15 +71,15 @@ resource "azurerm_monitor_diagnostic_setting" "iot_hub" {
   enabled_log {
     category = "Connections"
   }
-  
+
   enabled_log {
     category = "DeviceTelemetry"
   }
-  
+
   enabled_log {
     category = "C2DCommands"
   }
-  
+
   enabled_log {
     category = "DeviceIdentityOperations"
   }

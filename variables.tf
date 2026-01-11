@@ -1,3 +1,7 @@
+# Dev: Tyler Hudson - tkhudson
+# Terraform Variable Definitions
+# Configurable parameters for Azure Zero-Trust IoT deployment
+
 variable "location" {
   description = "Azure region for all resources"
   type        = string
@@ -32,7 +36,7 @@ variable "device_count" {
   description = "Number of simulated IoT devices (max 5 for free tier)"
   type        = number
   default     = 3
-  
+
   validation {
     condition     = var.device_count >= 1 && var.device_count <= 5
     error_message = "Device count must be between 1 and 5 for free tier limits."

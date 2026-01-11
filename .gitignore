@@ -1,26 +1,31 @@
-# Terraform files
+# Dev: Tyler Hudson - tkhudson
+# Git ignore file for Zero-Trust IoT Dashboard project
+# Prevents sensitive files from being committed to public repository
+
+# Terraform state files and sensitive data
 *.tfstate
-*.tfstate.backup
-*.tfstate.lock.info
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
+terraform.tfstate.backup
 .terraform/
 .terraform.lock.hcl
 
-# Environment variables
+# Device connection strings and secrets
+device_connections.json
+device_*.json
+connection_strings.txt
+*.pem
+*.key
+*.crt
 .env
 .env.local
 terraform.tfvars
 
-# IDE files
-.vscode/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Device simulation secrets
-device_*.json
-connection_strings.txt
+# State backups and sensitive data
+backups/
+state_config.txt
+*.backup
 
 # Dashboard build files
 node_modules/

@@ -1,0 +1,70 @@
+#!/bin/bash
+# Terraform State Management Demonstration
+# Showcases enterprise-grade state management practices
+
+set -euo pipefail
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+NC='\033[0m'
+
+DEMO_DIR=$(dirname "$(realpath "$0")")
+
+print_title() {
+    local title="$1"
+    echo -e "${PURPLE}"
+    echo "=================================================================="
+    echo "🎯 $title"
+    echo "=================================================================="
+    echo -e "${NC}"
+}
+
+print_section() {
+    local section="$1"
+    echo -e "${BLUE}"
+    echo ""
+    echo "▶️  $section"
+    echo "-----------------------------------------------------------"
+    echo -e "${NC}"
+}
+
+pause_for_demo() {
+    local message="${1:-Press ENTER to continue...}"
+    echo -e "${YELLOW}⏸️  $message${NC}"
+    read -r
+}
+
+demonstrate_current_state() {
+    print_section "Current State Analysis"
+    
+    echo "📊 Analyzing current Terraform state configuration..."
+    
+    # Show current backend configuration
+    echo -e "${BLUE}1. Backend Configuration:${NC}"
+    if grep -A 10 "backend \"azurerm\"" main.tf | head -10; then
+        echo -e "${YELLOW}   (Currently commented out - using local state)${NC}"
+    fi
+    
+    # Show current workspace
+    echo -e "${BLUE}2. Current Workspace:${NC}"
+    terraform workspace show
+    
+    # Show state resources
+    echo -e "${BLUE}3. Resources in State:${NC}"
+    if terraform state list &> /dev/null; then
+        local count=$(terraform state list | wc -l)
+        echo "   Total resources: $count"
+        terraform state list | head -5
+        if [ $count -gt 5 ]; then
+            echo "   ... and $(($count - 5)) more"
+        fi
+    else
+        echo "   No state found or state inaccessible"
+    fi
+    
+    pause_for_demo
+}\n\ndemonstrate_state_operations() {\n    print_section \"State Operations Toolkit\"\n    \n    echo \"🔧 Demonstrating advanced state management operations...\"\n    \n    # State analysis\n    echo -e \"${BLUE}1. State Health Check:${NC}\"\n    ./scripts/state_operations.sh monitor\n    \n    pause_for_demo \"Ready to see state backup and analysis?\"\n    \n    # State backup\n    echo -e \"${BLUE}2. State Backup:${NC}\"\n    ./scripts/state_operations.sh backup\n    \n    # State analysis\n    echo -e \"${BLUE}3. State Analysis:${NC}\"\n    ./scripts/state_operations.sh analyze\n    \n    pause_for_demo\n}\n\ndemonstrate_workspace_management() {\n    print_section \"Workspace Management\"\n    \n    echo \"🏢 Demonstrating multi-environment workspace strategies...\"\n    \n    # List current workspaces\n    echo -e \"${BLUE}1. Current Workspaces:${NC}\"\n    ./scripts/state_workspace_manager.sh list\n    \n    pause_for_demo \"Ready to create development environment?\"\n    \n    # Create development workspace\n    echo -e \"${BLUE}2. Creating Development Workspace:${NC}\"\n    ./scripts/state_workspace_manager.sh create demo-dev\n    \n    # Create staging workspace\n    echo -e \"${BLUE}3. Creating Staging Workspace:${NC}\"\n    ./scripts/state_workspace_manager.sh create demo-staging\n    \n    # Show workspace comparison\n    echo -e \"${BLUE}4. Workspace Comparison:${NC}\"\n    ./scripts/state_workspace_manager.sh compare default demo-dev\n    \n    # Clean up demo workspaces\n    echo -e \"${BLUE}5. Cleaning Up Demo Workspaces:${NC}\"\n    ./scripts/state_workspace_manager.sh delete demo-dev\n    ./scripts/state_workspace_manager.sh delete demo-staging\n    \n    pause_for_demo\n}\n\ndemonstrate_remote_state_setup() {\n    print_section \"Remote State Backend Setup\"\n    \n    echo \"☁️  Demonstrating enterprise remote state configuration...\"\n    \n    echo -e \"${BLUE}Available Remote State Setup Options:${NC}\"\n    echo \"  1. Full setup (creates Azure storage + migrates state)\"\n    echo \"  2. Setup only (creates storage infrastructure)\"\n    echo \"  3. Migrate only (assumes storage exists)\"\n    echo \"  4. Monitor setup (creates monitoring tools)\"\n    echo \"\"\n    echo -e \"${YELLOW}📋 What the setup includes:${NC}\"\n    echo \"  ✅ Azure Blob Storage with versioning\"\n    echo \"  ✅ State locking with lease mechanism\"\n    echo \"  ✅ Encryption at rest and in transit\"\n    echo \"  ✅ RBAC access control\"\n    echo \"  ✅ Cross-region replication\"\n    echo \"  ✅ Automated backup strategies\"\n    echo \"  ✅ State monitoring and health checks\"\n    echo \"\"\n    echo -e \"${BLUE}Setup script usage:${NC}\"\n    echo \"  ./scripts/setup_remote_state.sh full    # Complete setup\"\n    echo \"  ./scripts/setup_remote_state.sh setup   # Infrastructure only\"\n    echo \"  ./scripts/setup_remote_state.sh migrate # Migration only\"\n    echo \"  ./scripts/setup_remote_state.sh monitor # Monitoring tools\"\n    \n    pause_for_demo\n}\n\ndemonstrate_state_security() {\n    print_section \"State Security Best Practices\"\n    \n    echo \"🔒 Demonstrating state security and access control...\"\n    \n    echo -e \"${BLUE}1. State File Encryption:${NC}\"\n    echo \"   ✅ Azure Storage Service Encryption (at rest)\"\n    echo \"   ✅ HTTPS encryption (in transit)\"\n    echo \"   ✅ Azure Key Vault integration (optional)\"\n    \n    echo -e \"${BLUE}2. Access Control:${NC}\"\n    echo \"   ✅ Azure RBAC for storage account access\"\n    echo \"   ✅ Service principal authentication for CI/CD\"\n    echo \"   ✅ Least privilege principle\"\n    echo \"   ✅ Access logging and monitoring\"\n    \n    echo -e \"${BLUE}3. State Integrity:${NC}\"\n    echo \"   ✅ Blob versioning for rollback capability\"\n    echo \"   ✅ Soft delete protection (30 days)\"\n    echo \"   ✅ Cross-region replication\"\n    echo \"   ✅ State validation and health checks\"\n    \n    echo -e \"${BLUE}4. Compliance Features:${NC}\"\n    echo \"   ✅ Audit logging for all state operations\"\n    echo \"   ✅ Data residency controls\"\n    echo \"   ✅ Retention policy management\"\n    echo \"   ✅ Compliance tagging and metadata\"\n    \n    pause_for_demo\n}\n\ndemonstrate_disaster_recovery() {\n    print_section \"Disaster Recovery & Business Continuity\"\n    \n    echo \"🚨 State disaster recovery and backup strategies...\"\n    \n    echo -e \"${BLUE}1. Automated Backup Strategy:${NC}\"\n    echo \"   📅 Pre-operation state snapshots\"\n    echo \"   📅 Scheduled daily backups\"\n    echo \"   📅 Cross-region backup replication\"\n    echo \"   📅 Point-in-time recovery capability\"\n    \n    echo -e \"${BLUE}2. Recovery Procedures:${NC}\"\n    echo \"   🔄 State corruption recovery\"\n    echo \"   🔄 Accidental deletion recovery\"\n    echo \"   🔄 Infrastructure region failure recovery\"\n    echo \"   🔄 Team member access revocation\"\n    \n    # Demonstrate backup listing\n    echo -e \"${BLUE}3. Current Backups:${NC}\"\n    if [ -d \"./backups/state\" ]; then\n        echo \"   Recent state backups:\"\n        ls -lht ./backups/state/ | head -5\n    else\n        echo \"   No backups found (run state operations to create)\"\n    fi\n    \n    pause_for_demo\n}\n\nshow_interview_talking_points() {\n    print_section \"Interview & Portfolio Talking Points\"\n    \n    echo \"💼 Key points to highlight in technical discussions...\"\n    \n    echo -e \"${BLUE}🎯 Technical Expertise:${NC}\"\n    echo \"   ✅ 'Implemented enterprise-grade Terraform state management'\"\n    echo \"   ✅ 'Configured remote state with Azure backend for team collaboration'\"\n    echo \"   ✅ 'Established state locking to prevent corruption from concurrent operations'\"\n    echo \"   ✅ 'Designed multi-environment state isolation using workspace patterns'\"\n    echo \"   ✅ 'Created automated state backup and disaster recovery procedures'\"\n    \n    echo -e \"${BLUE}🔒 Security Considerations:${NC}\"\n    echo \"   ✅ 'State files contain sensitive data - implemented encryption and RBAC'\"\n    echo \"   ✅ 'Used Azure RBAC to restrict state access to authorized personnel only'\"\n    echo \"   ✅ 'Configured service principals for CI/CD pipeline state access'\"\n    echo \"   ✅ 'Enabled comprehensive audit logging for compliance requirements'\"\n    \n    echo -e \"${BLUE}⚡ Operational Excellence:${NC}\"\n    echo \"   ✅ 'Automated state migration scripts for environment promotion'\"\n    echo \"   ✅ 'Implemented state drift detection and remediation procedures'\"\n    echo \"   ✅ 'Created state monitoring and alerting for proactive issue resolution'\"\n    echo \"   ✅ 'Established state surgery procedures for emergency operations'\"\n    \n    echo -e \"${BLUE}🏢 Enterprise Practices:${NC}\"\n    echo \"   ✅ 'Designed workspace strategy for dev/staging/prod isolation'\"\n    echo \"   ✅ 'Implemented state versioning and rollback capabilities'\"\n    echo \"   ✅ 'Created team collaboration workflows with proper access controls'\"\n    echo \"   ✅ 'Established cost optimization through free tier state management'\"\n    \n    pause_for_demo\n}\n\nshow_implementation_guide() {\n    print_section \"Quick Implementation Guide\"\n    \n    echo \"🚀 How to implement this in your own projects...\"\n    \n    echo -e \"${BLUE}Step 1: Initialize Remote State${NC}\"\n    echo \"   ./scripts/setup_remote_state.sh full\"\n    echo \"\"\n    \n    echo -e \"${BLUE}Step 2: Set Up Multi-Environment Workspaces${NC}\"\n    echo \"   ./scripts/state_workspace_manager.sh setup\"\n    echo \"\"\n    \n    echo -e \"${BLUE}Step 3: Configure Environment-Specific Variables${NC}\"\n    echo \"   # Creates terraform.tfvars.dev, terraform.tfvars.staging, etc.\"\n    echo \"   # Edit each file for environment-specific settings\"\n    echo \"\"\n    \n    echo -e \"${BLUE}Step 4: Deploy to Different Environments${NC}\"\n    echo \"   ./scripts/state_workspace_manager.sh plan dev\"\n    echo \"   ./scripts/state_workspace_manager.sh apply dev\"\n    echo \"\"\n    \n    echo -e \"${BLUE}Step 5: Monitor and Maintain State${NC}\"\n    echo \"   ./scripts/state_operations.sh monitor    # Health checks\"\n    echo \"   ./scripts/state_operations.sh backup     # Create backups\"\n    echo \"   ./scripts/state_operations.sh analyze    # Analyze state\"\n    echo \"\"\n    \n    echo -e \"${GREEN}💡 Pro Tips:${NC}\"\n    echo \"   • Always backup state before major operations\"\n    echo \"   • Use workspaces for environment separation\"\n    echo \"   • Monitor state health regularly\"\n    echo \"   • Implement automated backup in CI/CD\"\n    echo \"   • Use RBAC to control state access\"\n    \n    pause_for_demo\n}\n\nprint_summary() {\n    print_title \"TERRAFORM STATE MANAGEMENT DEMONSTRATION COMPLETE\"\n    \n    echo -e \"${GREEN}🎉 You now have enterprise-grade Terraform state management!${NC}\"\n    echo \"\"\n    echo -e \"${BLUE}📁 Created Files & Scripts:${NC}\"\n    echo \"   ✅ ./scripts/setup_remote_state.sh      - Remote state setup\"\n    echo \"   ✅ ./scripts/state_operations.sh        - State operations toolkit\"\n    echo \"   ✅ ./scripts/state_workspace_manager.sh - Workspace management\"\n    echo \"   ✅ ./TERRAFORM_STATE_MANAGEMENT.md      - Complete documentation\"\n    echo \"\"\n    echo -e \"${BLUE}🎯 Key Capabilities Demonstrated:${NC}\"\n    echo \"   ✅ Remote state with Azure Blob Storage\"\n    echo \"   ✅ State locking and corruption prevention\"\n    echo \"   ✅ Multi-environment workspace management\"\n    echo \"   ✅ Automated backup and recovery procedures\"\n    echo \"   ✅ State security and access control\"\n    echo \"   ✅ Comprehensive monitoring and health checks\"\n    echo \"   ✅ Enterprise-grade operational procedures\"\n    echo \"\"\n    echo -e \"${PURPLE}💼 Perfect for demonstrating:${NC}\"\n    echo \"   🎯 Advanced Terraform expertise\"\n    echo \"   🎯 Enterprise infrastructure practices\"\n    echo \"   🎯 Security-first DevOps approach\"\n    echo \"   🎯 Operational excellence mindset\"\n    echo \"   🎯 Team collaboration solutions\"\n    echo \"\"\n    echo -e \"${YELLOW}🚀 Next Steps:${NC}\"\n    echo \"   1. Run './scripts/setup_remote_state.sh full' to implement\"\n    echo \"   2. Customize workspace configurations for your environments\"\n    echo \"   3. Integrate state monitoring into your CI/CD pipelines\"\n    echo \"   4. Use these scripts and practices in your own projects\"\n    echo \"   5. Showcase this expertise in technical interviews!\"\n    echo \"\"\n    echo -e \"${GREEN}🏆 Your Terraform state management skills are now interview-ready!${NC}\"\n}\n\nmain() {\n    print_title \"TERRAFORM STATE MANAGEMENT DEMONSTRATION\"\n    \n    echo -e \"${BLUE}Welcome to the comprehensive Terraform state management demo!${NC}\"\n    echo \"This demonstration showcases enterprise-grade practices for:\"\n    echo \"  🎯 Remote state configuration and management\"\n    echo \"  🎯 Multi-environment workspace strategies\"\n    echo \"  🎯 State security and access control\"\n    echo \"  🎯 Backup and disaster recovery procedures\"\n    echo \"  🎯 Operational monitoring and health checks\"\n    echo \"\"\n    echo -e \"${YELLOW}Perfect for technical interviews and portfolio presentations!${NC}\"\n    \n    pause_for_demo \"Ready to start the demonstration?\"\n    \n    # Run demonstration sections\n    demonstrate_current_state\n    demonstrate_state_operations\n    demonstrate_workspace_management\n    demonstrate_remote_state_setup\n    demonstrate_state_security\n    demonstrate_disaster_recovery\n    show_interview_talking_points\n    show_implementation_guide\n    print_summary\n    \n    echo -e \"${PURPLE}🎊 Thank you for exploring Terraform state management!${NC}\"\n}\n\n# Change to project directory\ncd \"$DEMO_DIR\"\n\n# Run the demonstration\nmain

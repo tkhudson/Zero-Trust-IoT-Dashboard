@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero-Trust IoT Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@azure/event-hubs@5.11.4/dist/index.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>🔐 Zero-Trust IoT Dashboard</h1>
+                <div class="status-indicators">
+                    <div class="status-card">
+                        <span class="status-label">Connected Devices</span>
+                        <span id="device-count" class="status-value">0</span>
+                    </div>
+                    <div class="status-card">
+                        <span class="status-label">Messages Today</span>
+                        <span id="message-count" class="status-value">0</span>
+                    </div>
+                    <div class="status-card">
+                        <span class="status-label">Security Status</span>
+                        <span id="security-status" class="status-value security-ok">✅ SECURE</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <main class="dashboard-grid">
+            <!-- Real-time Telemetry Charts -->
+            <section class="chart-section">
+                <div class="section-header">
+                    <h2>📊 Real-time Telemetry</h2>
+                    <div class="chart-controls">
+                        <button id="pause-btn" class="btn btn-secondary">⏸️ Pause</button>
+                        <button id="reset-btn" class="btn btn-secondary">🔄 Reset</button>
+                    </div>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <canvas id="temperatureChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="humidityChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Device Status Cards -->
+            <section class="devices-section">
+                <div class="section-header">
+                    <h2>🖥️ Device Status</h2>
+                    <span id="last-update" class="last-update">Last update: Never</span>
+                </div>
+                <div class="devices-grid" id="devices-grid">
+                    <!-- Device cards will be populated dynamically -->
+                </div>
+            </section>
+
+            <!-- Network Security Monitor -->
+            <section class="security-section">
+                <div class="section-header">
+                    <h2>🛡️ Zero-Trust Security</h2>
+                    <div class="security-indicator">
+                        <span id="threat-level" class="threat-level-low">LOW</span>
+                    </div>
+                </div>
+                <div class="security-grid">
+                    <div class="security-card">
+                        <h3>🔒 Network Segmentation</h3>
+                        <div class="security-status">
+                            <span class="security-item">✅ VNet Isolation</span>
+                            <span class="security-item">✅ NSG Rules Active</span>
+                            <span class="security-item">✅ Subnet Segmentation</span>
+                        </div>
+                    </div>
+                    <div class="security-card">
+                        <h3>🔑 Device Authentication</h3>
+                        <div class="security-status">
+                            <span class="security-item">✅ Certificate-based Auth</span>
+                            <span class="security-item">✅ Per-device Keys</span>
+                            <span class="security-item">✅ TLS 1.2+ Only</span>
+                        </div>
+                    </div>
+                    <div class="security-card">
+                        <h3>🚨 Threat Detection</h3>
+                        <div class="security-status" id="threat-status">
+                            <span class="security-item">✅ Defender for IoT</span>
+                            <span class="security-item">✅ Anomaly Detection</span>
+                            <span class="security-item">✅ Behavioral Analysis</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Alerts -->
+            <section class="alerts-section">
+                <div class="section-header">
+                    <h2>⚠️ Security Alerts</h2>
+                    <button id="clear-alerts-btn" class="btn btn-small">Clear All</button>
+                </div>
+                <div class="alerts-container" id="alerts-container">
+                    <div class="no-alerts">
+                        <span>🎉 No security alerts - All systems secure</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Metrics -->
+            <section class="metrics-section">
+                <div class="section-header">
+                    <h2>📈 System Metrics</h2>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>IoT Hub Usage</h3>
+                        <div class="metric-value">
+                            <span id="hub-usage">0</span>
+                            <span class="metric-unit">/ 8,000 msg/day</span>
+                        </div>
+                        <div class="metric-bar">
+                            <div id="hub-usage-bar" class="metric-progress"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Device Connectivity</h3>
+                        <div class="metric-value">
+                            <span id="connectivity-rate">100</span>
+                            <span class="metric-unit">% uptime</span>
+                        </div>
+                        <div class="metric-bar">
+                            <div id="connectivity-bar" class="metric-progress" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Response Time</h3>
+                        <div class="metric-value">
+                            <span id="response-time">45</span>
+                            <span class="metric-unit">ms avg</span>
+                        </div>
+                        <div class="metric-bar">
+                            <div id="response-bar" class="metric-progress" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <div class="footer-content">
+                <span>🔐 Zero-Trust IoT Demo | Azure IoT Hub F1 (Free Tier) | 
+                    <a href="https://portal.azure.com" target="_blank">Azure Portal</a>
+                </span>
+                <span id="dashboard-status">🟢 Dashboard Active</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="dashboard.js"></script>
+</body>
+</html>

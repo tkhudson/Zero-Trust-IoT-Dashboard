@@ -1,3 +1,7 @@
+# Dev: Tyler Hudson - tkhudson
+# Network Security Configuration - Zero-Trust Implementation
+# Virtual network and security group rules for IoT isolation
+
 # =============================================================================
 # RESOURCE GROUP
 # =============================================================================
@@ -11,17 +15,17 @@ resource "azurerm_resource_group" "main" {
 # STORAGE ACCOUNT FOR TERRAFORM STATE (Bootstrap)
 # =============================================================================
 resource "azurerm_storage_account" "state" {
-  name                     = local.storage_name
+  name                     = substr("st${replace(replace(var.project_name, "-", ""), "_", "")}${replace(random_string.suffix.result, "-", "")}", 0, 24)
   resource_group_name      = azurerm_resource_group.main.name
-  location                = azurerm_resource_group.main.location
+  location                 = azurerm_resource_group.main.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  
+
   # Security settings
   allow_nested_items_to_be_public = false
-  enable_https_traffic_only       = true
+  https_traffic_only_enabled      = true
   min_tls_version                 = "TLS1_2"
-  
+
   tags = merge(local.common_tags, {
     Purpose = "Terraform-State-Management"
   })
@@ -41,7 +45,7 @@ resource "azurerm_virtual_network" "main" {
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-  
+
   tags = merge(local.common_tags, {
     Purpose = "Zero-Trust-Network-Segmentation"
   })
@@ -52,7 +56,7 @@ resource "azurerm_subnet" "iot" {
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = ["10.0.1.0/24"]
-  
+
   # Service endpoints for IoT Hub (when available in free tier)
   service_endpoints = ["Microsoft.Storage"]
 }
@@ -62,7 +66,7 @@ resource "azurerm_network_security_group" "iot" {
   name                = local.nsg_name
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-  
+
   tags = merge(local.common_tags, {
     Purpose = "IoT-Device-Security"
   })
