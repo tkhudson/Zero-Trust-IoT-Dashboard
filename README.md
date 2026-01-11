@@ -98,8 +98,6 @@ This project demonstrates enterprise-grade Zero-Trust IoT architecture using **1
 ### 1-Click Deployment
 
 ```bash
-git clone <your-repo>
-cd Zero-Trust-iot-dash
 ./setup.sh
 ```
 
