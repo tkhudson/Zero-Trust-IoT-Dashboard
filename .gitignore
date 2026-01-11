@@ -1,0 +1,31 @@
+# Terraform files
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+.terraform/
+.terraform.lock.hcl
+
+# Environment variables
+.env
+.env.local
+terraform.tfvars
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Device simulation secrets
+device_*.json
+connection_strings.txt
+
+# Dashboard build files
+node_modules/
+dist/
+build/
+
+# Logs
+*.log
